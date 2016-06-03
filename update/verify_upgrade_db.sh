@@ -104,6 +104,7 @@ PROPER_LATEST_TAG=$SHORT_LATEST_TAG".0.0"
 echo "Switching on lastest tag major version ($PROPER_LATEST_TAG)"
 git checkout tags/$PROPER_LATEST_TAG
 
+cd ..
 echo "Initializing qwat DB in qwat_test_conform"
 ./init_qwat.sh -p $QWATSERVICETESTCONFORM -d > init_qwat.log
 
