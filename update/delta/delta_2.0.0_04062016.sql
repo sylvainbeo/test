@@ -1,0 +1,1 @@
+CREATE TABLE qwat_od.test2(id serial);
