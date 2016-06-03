@@ -75,25 +75,18 @@ echo "Creating DB (qwat_test_conform)"
 echo "Getting lastest Tag num"
 cd $DIR
 LASTEST_TAG=$(git describe)
-#LASTEST_TAG=$($TRAVIS_BUILD_DIR/git describe)
-printf "    Lastest tag = ${GREEN}$LASTEST_TAG${NC}\n"
+#PROPER_LATEST_TAG=$(echo $LATEST_TAG| cut -d'-' -f 1)
+PROPER_LATEST_TAG=$(echo $LATEST_TAG| cut -c 2)
+printf "Latest tag = ${GREEN}$PROPER_LATEST_TAG${NC}\n"
 
 
-EXITCODE=0
-exit $EXITCODE
-
-
-
-echo "Restoring in test DB"
-/usr/bin/pg_restore --host $HOST --port 5432 --username "$USER" --dbname "$TESTDB" --no-password --single-transaction --exit-on-error "$TODAY""_current_qwat.backup"
-#/usr/bin/pg_restore -d "service=$QWATSERVICETEST" --single-transaction --exit-on-error "$TODAY""_current_qwat.backup"
 
 echo "Applying deltas on $TESTDB:"
 for f in $DIR/delta/*.sql
 do
     CURRENT_DELTA=$(basename "$f")
     CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -d'_' -f 2)
-    if [[ $CURRENT_DELTA_NUM_VERSION > $NUMVERSION ]]; then
+    if [[ $CURRENT_DELTA_NUM_VERSION > $NUMVERSION || $PROPER_LATEST_TAG == '' ]]; then
         printf "    Processing ${GREEN}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
         /usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -q -d "$TESTDB" -f $f
     else
@@ -102,10 +95,11 @@ do
 done
 
 
-echo "Initializing qwat DB in qwat_test_conform"
-cd ..
-./init_qwat.sh -p $QWATSERVICETESTCONFORM -d > update/init_qwat.log
-cd update
+EXITCODE=0
+exit $EXITCODE
+
+
+
 
 echo "Producing referential file for current qWat version (from $QWATSERVICETESTCONFORM)"
 /usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -d "$QWATSERVICETESTCONFORM" -f test_migration.sql > test_migration.expected.sql
