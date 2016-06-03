@@ -1,1 +1,2 @@
 INSERT 0 1
+DELETE 1
