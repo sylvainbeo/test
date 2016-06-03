@@ -18,14 +18,14 @@ install:
 before_script: 
   - printf "[qwat_test]\nhost=localhost\ndbname=qwat_test\nuser=postgres" > ~/.pg_service.conf
   - psql -c 'CREATE DATABASE qwat_test;' -U postgres
-  - git clone https://github.com/sylvainbeo/test.git test_sbe
+  #- git clone https://github.com/sylvainbeo/test.git test_sbe
   
 script: 
-  #- $TRAVIS_BUILD_DIR/init_qwat.sh -p qwat_test -s 21781 -r
-  #- PGSERVICE=qwat_test SRID=21781 $TRAVIS_BUILD_DIR/ordinary_data/views/rewrite_views.sh
-  #- $TRAVIS_BUILD_DIR/tests/tests.sh --no-init
-  #- $TRAVIS_BUILD_DIR/update/verify_upgrade_db.sh
-  - $CI_HOME/init_qwat.sh -p qwat_test -s 21781 -r
-  - PGSERVICE=qwat_test SRID=21781 $CI_HOME/ordinary_data/views/rewrite_views.sh
-  - $CI_HOME/tests/tests.sh --no-init
-  - $CI_HOME/update/verify_upgrade_db.sh
+  - $TRAVIS_BUILD_DIR/init_qwat.sh -p qwat_test -s 21781 -r
+  - PGSERVICE=qwat_test SRID=21781 $TRAVIS_BUILD_DIR/ordinary_data/views/rewrite_views.sh
+  - $TRAVIS_BUILD_DIR/tests/tests.sh --no-init
+  - $TRAVIS_BUILD_DIR/update/verify_upgrade_db.sh
+  #- $CI_HOME/init_qwat.sh -p qwat_test -s 21781 -r
+  #- PGSERVICE=qwat_test SRID=21781 $CI_HOME/ordinary_data/views/rewrite_views.sh
+  #- $CI_HOME/tests/tests.sh --no-init
+  #- $CI_HOME/update/verify_upgrade_db.sh
