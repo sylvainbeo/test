@@ -1,1 +1,1 @@
-CREATE TABLE bbb (id serial);
+CREATE TABLE qwat_od.bbb (id serial);

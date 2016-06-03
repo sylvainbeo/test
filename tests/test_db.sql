@@ -1,3 +1,3 @@
-INSERT INTO aaa (id, name) VALUES (1, 'Demo Distributor');
+INSERT INTO qwat_od.aaa (id, name) VALUES (1, 'Demo Distributor');
 
-DELETE FROM aaa;
+DELETE FROM qwat_od.aaa;

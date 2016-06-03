@@ -1,1 +1,1 @@
-CREATE VIEW v_aaa as select * from aaa;
+CREATE VIEW qwat_od.v_aaa as select * from aaa;

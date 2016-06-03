@@ -71,41 +71,32 @@ echo "Creating DB (qwat_test_conform)"
 /usr/bin/createdb "$TESTCONFORMDB" --host $HOST --port 5432 --username "$USER" --no-password
 #/usr/bin/createdb -d "service=$QWATSERVICETEST"
 
-
 echo "Getting lastest Tag num"
 cd $DIR
-LASTEST_TAG=$(git describe)
+LATEST_TAG=$(git describe)
 #PROPER_LATEST_TAG=$(echo $LATEST_TAG| cut -d'-' -f 1)
 PROPER_LATEST_TAG=$(echo $LATEST_TAG| cut -c 2)
 printf "Latest tag = ${GREEN}$PROPER_LATEST_TAG${NC}\n"
 
-
-
-echo "Applying deltas on $TESTDB:"
+echo "Applying deltas on $TESTCONFORMDB:"
 for f in $DIR/delta/*.sql
 do
     CURRENT_DELTA=$(basename "$f")
     CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -d'_' -f 2)
     if [[ $CURRENT_DELTA_NUM_VERSION > $NUMVERSION || $PROPER_LATEST_TAG == '' ]]; then
         printf "    Processing ${GREEN}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
-        /usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -q -d "$TESTDB" -f $f
+        /usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -q -d "$TESTCONFORMDB" -f $f
     else
         printf "    Bypassing  ${RED}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
     fi
 done
 
+echo "Producing referential file for test_qwat DB (from $QWATSERVICETEST)"
+/usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -d "$QWATSERVICETEST" -f test_migration.sql > test_migration.expected.sql
 
-EXITCODE=0
-exit $EXITCODE
-
-
-
-
-echo "Producing referential file for current qWat version (from $QWATSERVICETESTCONFORM)"
-/usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -d "$QWATSERVICETESTCONFORM" -f test_migration.sql > test_migration.expected.sql
 
 echo "Performing conformity test"
-STATUS=$(python test_migration.py --pg_service $QWATSERVICETEST)
+STATUS=$(python test_migration.py --pg_service $QWATSERVICETESTCONFORM)
 
 if [[ $STATUS == "DataModel is OK" ]]; then
     printf "${GREEN}Migration TEST is successfull${NC}. You may now migrate your real DB\n"
@@ -113,12 +104,17 @@ else
     printf "${RED}Migration TEST has failed${NC}. Please contact qWat team and give them the following output :\n $STATUS \n\n"
 fi
 
-echo "Cleaning"
-rm "$TODAY""_current_qwat.backup"
-rm init_qwat.log
-
-# TODO : dropping qwat_test
-# TODO : dropping qwat_test_conform
-
 EXITCODE=0
 exit $EXITCODE
+
+
+# 
+# echo "Cleaning"
+# rm "$TODAY""_current_qwat.backup"
+# rm init_qwat.log
+# 
+# # TODO : dropping qwat_test
+# # TODO : dropping qwat_test_conform
+# 
+# EXITCODE=0
+# exit $EXITCODE

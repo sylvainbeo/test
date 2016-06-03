@@ -12,6 +12,7 @@ install:
 
 before_script: 
   - printf "[qwat_test]\nhost=localhost\ndbname=qwat_test\nuser=postgres" > ~/.pg_service.conf
+  - printf "[qwat_test_conform]\nhost=localhost\ndbname=qwat_test_conform\nuser=postgres" > ~/.pg_service.conf
   - psql -c 'CREATE DATABASE qwat_test;' -U postgres
   
 script: 
