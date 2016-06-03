@@ -76,12 +76,14 @@ cd $DIR
 LATEST_TAG=$(git describe)
 #PROPER_LATEST_TAG=$(echo $LATEST_TAG| cut -d'-' -f 1)
 SHORT_LATEST_TAG=$(echo $LATEST_TAG| cut -c 1)
-printf "Latest tag = ${GREEN}$SHORT_LATEST_TAG${NC}\n"
+printf "    Latest tag = ${GREEN}$SHORT_LATEST_TAG${NC}\n"
 
 
 # !!!!!!!!!    TODO We need to execute init_qwat.sh from the lastest TAG version in $QWATSERVICETESTCONFORM
 # Saving current branch
+echo "Saving current branch"
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+printf "    Current branch = ${GREEN}$CURRENT_BRANCH${NC}\n"
 
 PROPER_LATEST_TAG=$SHORT_LATEST_TAG".0.0"
 echo "Switching on lastest tag major version ($PROPER_LATEST_TAG)"
