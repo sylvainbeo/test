@@ -36,7 +36,7 @@ done
 
 
         # 1 Create DB test
-        # 2 Launch init_qwat.sh on DB test
+        # 2 Launch init_qwat.sh on DB test (QWAT_TEST will be the good DB)
         # 4 Create DB test_conform
 # 5 Get lastest tagged version of qwat     git describe  => ex: v1.2-2-g91fec13 , extract the latest tag version => NUM_TAG  # TODO if no tag, take the actual repository 
 # 6 Switch on that branch and launch init_qwat.sh on test_conform    git checkout -b version2 v2.0.0
@@ -62,8 +62,7 @@ echo "Creating DB (qwat_test)"
 
 echo "Initializing qwat DB in qwat_test"
 cd ..
-./init_qwat.sh -p $QWATSERVICETEST -d > $DIR/update/init_qwat.log
-cd update
+./init_qwat.sh -p $QWATSERVICETEST -d > init_qwat.log
 
 echo "Droping DB (qwat_test_conform)"
 /usr/bin/dropdb "$TESTCONFORMDB" --host $HOST --port 5432 --username "$USER" --no-password
