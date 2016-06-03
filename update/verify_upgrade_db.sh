@@ -81,7 +81,7 @@ printf "Latest tag = ${GREEN}$SHORT_LATEST_TAG${NC}\n"
 
 # !!!!!!!!!    TODO We need to execute init_qwat.sh from the lastest TAG version in $QWATSERVICETESTCONFORM
 # Saving current branch
-CURRENT_BRANCH=git rev-parse --abbrev-ref HEAD
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 PROPER_LATEST_TAG=$SHORT_LATEST_TAG".0.0"
 echo "Switching on lastest tag major version ($PROPER_LATEST_TAG)"
@@ -91,7 +91,7 @@ cd ..
 echo "Initializing qwat DB in qwat_test_conform"
 ./init_qwat.sh -p $QWATSERVICETESTCONFORM -d > init_qwat.log
 
-echo "Switching back to current branch ($PROPER_LATEST_TAG)"
+echo "Switching back to current branch ($CURRENT_BRANCH)"
 git checkout $CURRENT_BRANCH
 
 
@@ -101,7 +101,7 @@ do
     CURRENT_DELTA=$(basename "$f")
     #CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -d'_' -f 2)
     CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -c 7)
-    if [[ $CURRENT_DELTA_NUM_VERSION >= $SHORT_LATEST_TAG || $SHORT_LATEST_TAG == '' ]]; then
+    if [[ $CURRENT_DELTA_NUM_VERSION > $SHORT_LATEST_TAG || $CURRENT_DELTA_NUM_VERSION == $SHORT_LATEST_TAG || $SHORT_LATEST_TAG == '' ]]; then
         printf "    Processing ${GREEN}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
         /usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -q -d "$TESTCONFORMDB" -f $f
     else
