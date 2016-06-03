@@ -78,23 +78,6 @@ LATEST_TAG=$(git describe)
 SHORT_LATEST_TAG=$(echo $LATEST_TAG| cut -c 1)
 printf "Latest tag = ${GREEN}$SHORT_LATEST_TAG${NC}\n"
 
-echo "Applying deltas on $TESTCONFORMDB:"
-for f in $DIR/delta/*.sql
-do
-    CURRENT_DELTA=$(basename "$f")
-    #CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -d'_' -f 2)
-    CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -c 7)
-    if [[ $CURRENT_DELTA_NUM_VERSION > $NUMVERSION || $SHORT_LATEST_TAG == '' ]]; then
-        printf "    Processing ${GREEN}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
-        /usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -q -d "$TESTCONFORMDB" -f $f
-    else
-        printf "    Bypassing  ${RED}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
-    fi
-done
-
-echo "Producing referential file for test_qwat DB (from $QWATSERVICETEST)"
-/usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -d "$QWATSERVICETEST" -f test_migration.sql > test_migration.expected.sql
-
 
 # !!!!!!!!!    TODO We need to execute init_qwat.sh from the lastest TAG version in $QWATSERVICETESTCONFORM
 # Saving current branch
@@ -110,6 +93,24 @@ echo "Initializing qwat DB in qwat_test_conform"
 
 echo "Switching back to current branch ($PROPER_LATEST_TAG)"
 git checkout $CURRENT_BRANCH
+
+
+echo "Applying deltas on $TESTCONFORMDB:"
+for f in $DIR/delta/*.sql
+do
+    CURRENT_DELTA=$(basename "$f")
+    #CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -d'_' -f 2)
+    CURRENT_DELTA_NUM_VERSION=$(echo $CURRENT_DELTA| cut -c 7)
+    if [[ $CURRENT_DELTA_NUM_VERSION > $SHORT_LATEST_TAG || $SHORT_LATEST_TAG == '' ]]; then
+        printf "    Processing ${GREEN}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
+        /usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -q -d "$TESTCONFORMDB" -f $f
+    else
+        printf "    Bypassing  ${RED}$CURRENT_DELTA${NC}, num version = $CURRENT_DELTA_NUM_VERSION\n"
+    fi
+done
+
+echo "Producing referential file for test_qwat DB (from $QWATSERVICETEST)"
+/usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -d "$QWATSERVICETEST" -f test_migration.sql > test_migration.expected.sql
 
 
 #  By the way, this cannot work if there is no TAG version
