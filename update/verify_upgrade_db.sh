@@ -61,7 +61,6 @@ echo "Creating DB (qwat_test)"
 #/usr/bin/createdb -d "service=$QWATSERVICETEST"
 
 echo "Initializing qwat DB in qwat_test"
-cd ..
 ./init_qwat.sh -p $QWATSERVICETEST -d > init_qwat.log
 
 echo "Droping DB (qwat_test_conform)"
