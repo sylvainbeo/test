@@ -48,9 +48,9 @@ done
 # export PGPASSWORD="$pwd"
 # echo ""
 
-echo "Getting current num version"
-NUMVERSION=\"$(/usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -d "$SRCDB" -c "COPY(SELECT version FROM qwat_sys.versions WHERE module='model.core') TO STDOUT")\"
-printf "You are currently using qWat v${GREEN}$NUMVERSION${NC}\n"
+# echo "Getting current num version"
+# NUMVERSION=\"$(/usr/bin/psql --host $HOST --port 5432 --username "$USER" --no-password -d "$SRCDB" -c "COPY(SELECT version FROM qwat_sys.versions WHERE module='model.core') TO STDOUT")\"
+# printf "You are currently using qWat v${GREEN}$NUMVERSION${NC}\n"
 
 echo "Droping existing qwat_test"
 /usr/bin/dropdb "$TESTDB" --host $HOST --port 5432 --username "$USER" --no-password
@@ -62,7 +62,7 @@ echo "Creating DB (qwat_test)"
 
 echo "Initializing qwat DB in qwat_test"
 cd ..
-./init_qwat.sh -p $QWATSERVICETESTCONFORM -d > update/init_qwat.log
+./init_qwat.sh -p $QWATSERVICETEST -d > $DIR/update/init_qwat.log
 cd update
 
 echo "Droping DB (qwat_test_conform)"
