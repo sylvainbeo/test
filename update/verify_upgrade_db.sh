@@ -74,7 +74,7 @@ echo "Creating DB (qwat_test_conform)"
 
 
 echo "Getting lastest Tag num"
-LASTEST_TAG=$(git describe)
+LASTEST_TAG=$($DIR/git describe)
 #LASTEST_TAG=$($TRAVIS_BUILD_DIR/git describe)
 printf "    Lastest tag = ${GREEN}$LASTEST_TAG${NC}\n"
 
