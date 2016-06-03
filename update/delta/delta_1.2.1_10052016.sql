@@ -1,0 +1,1 @@
+CREATE TABLE bbb (id serial);
